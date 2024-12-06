@@ -56,9 +56,11 @@ bot.on('guildMemberUpdate', function(oldMember, newMember) {
     }
 });
 
-bot.on('message', function (message) {
+bot.on('messageCreate', function (message) {
     logger.debug(`#${message.channel.name} ${message.author.username}: ${message.content}`);
+
     var obj = _.find(channels, function (obj) { return obj.name === message.channel.id; });
+
     if (!obj) {
         logger.debug('NO OBJ');
     }
@@ -70,14 +72,13 @@ bot.on('message', function (message) {
             // logger.debug(util.inspect(message.embeds));
             // logger.debug(message.type);
             // logger.debug('===============');
-            var obj = _.find(channels, function (obj) { return obj.id === message.channel.id; });
 
             var post_data = {};
-                //post_data.username = message.guild.name;
+                post_data.username = message.guild.name;
 
             if (message.content && message.content != '') {
                 logger.info(`#${message.channel.name} ${message.author.username}: ${message.content}`);
-                post_data.content = `**#${message.channel.name}**: ${message.content}`
+                post_data.content = `**#${message.channel.name} ${message.author.displayName}**: ${message.content}`
             }
 
             if (message.embeds.length > 0) {
@@ -108,8 +109,7 @@ bot.on('message', function (message) {
                 var embedTest = {"color":"#3AA3E3","fields":[{"name":"name","value":"value","inline":false},{"name":"name","value":"value","inline":true}]};
                 post_data.embeds = [embed];
             }
-            
-            var url = obj.webhook;
+
             var options = {
                 method: 'post',
                 body: post_data,

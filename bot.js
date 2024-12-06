@@ -1,6 +1,6 @@
 var util = require('util');
 var auth = require('./auth.json');
-var Discord = require('discord.js');
+var Discord = require('discord.js-selfbot-v13');
 var _ = require("underscore");
 var logger = require('winston');
     logger.info('Initializing bot');
@@ -19,44 +19,6 @@ bot.on('ready', function () {
     logger.info('Connected');
     logger.info('Logged in as: ');
     logger.info(bot.user.username + ' - (' + bot.user.id + ')');
-    bot.user.setStatus('invisible')
-        .then(console.log)
-        .catch(console.error);
-    var channelArr = bot.channels.array();
-    console.log(`\nAvailable channels:\n`);
-    for (i in channelArr) {
-        console.log(`${channelArr[i].name} (${channelArr[i].id}): Guild: ${channelArr[i].guild}`);
-    }
-    console.log(`\n\nListening to:\n`);
-    for (i in channels) {
-        if (channels[i].name) {
-            if (bot.channels.exists('name', channels[i].name)) {
-                let tmpChan = bot.channels.find('name', channels[i].name);
-                channels[i].id = tmpChan.id;
-                console.log(`Found channel ${channels[i].name} with ID ${channels[i].id}`);
-                chanArr.push(channels[i].id);
-                console.log(channels[i]);
-                tmpChan.fetchMessages({ limit: 10 })
-                .then(messages => console.log(`Received ${messages.size} messages\n\n${messages.array()}`))
-                .catch(console.error);
-            } else {
-                logger.warn(`Could not find channel ${channels[i].name}`);
-            }
-        } else if (channels[i].id) {
-            if (bot.channels.has(channels[i].id)) {
-                let tmpChan = bot.channels.get(channels[i].id);
-                channels[i].name = tmpChan.name;
-                console.log(`Found channel ${channels[i].name} with ID ${channels[i].id}`);
-                chanArr.push(channels[i].id);
-                console.log(channels[i]);
-                tmpChan.fetchMessages({ limit: 10 })
-                .then(messages => console.log(`Received ${messages.size} messages\n\n${messages.array()}`))
-                .catch(console.error);
-            } else {
-                logger.warn(`Could not find channel name for id ${channels[i].id}`);
-            }
-        }
-    }
 });
 
 bot.on('disconnect', function(errMsg, code) {

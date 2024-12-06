@@ -58,7 +58,12 @@ bot.on('guildMemberUpdate', function(oldMember, newMember) {
 
 bot.on('message', function (message) {
     logger.debug(`#${message.channel.name} ${message.author.username}: ${message.content}`);
-    if (chanArr.indexOf(message.channel.id) > -1) {
+    var obj = _.find(channels, function (obj) { return obj.name === message.channel.id; });
+    if (!obj) {
+        logger.debug('NO OBJ');
+    }
+    if (obj) {
+        logger.debug(`refusing to relay? ${relay}`);
         if (relay) {
             // logger.debug('==== DEBUG ====');
             // logger.debug(util.inspect(message.attachments));
@@ -103,21 +108,13 @@ bot.on('message', function (message) {
                 var embedTest = {"color":"#3AA3E3","fields":[{"name":"name","value":"value","inline":false},{"name":"name","value":"value","inline":true}]};
                 post_data.embeds = [embed];
             }
-
-            var attachArray = message.attachments.array();
-            if (attachArray.length > 0) {
-                // logger.debug(util.inspect(attachArray));
-                var attach = attachArray[0];
-                logger.debug(attach.url);
-                post_data.content += '\n'+attach.url;
-            }
             
             var url = obj.webhook;
             var options = {
                 method: 'post',
                 body: post_data,
                 json: true,
-                url: url
+                url: obj.webhook
             };
             request(options, function (err, res, body) {
                 if (err) {

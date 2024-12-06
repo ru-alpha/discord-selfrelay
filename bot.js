@@ -161,5 +161,8 @@ const resolveMentions = (message) => {
         return role ? `@${role.name}` : match;
     });
 
+    // prevent image embedding preventing CDN abuse to see if channel is being relayed.
+    content = content.replace(/http/g, "ht tp");
+
     return content;
 };

@@ -71,8 +71,9 @@ bot.on('messageCreate', function (message) {
                 post_data.username = message.guild.name;
 
             if (message.content && message.content != '') {
+                const resolvedContent = resolveMentions(message);
                 logger.info(`#${message.channel.name} ${message.author.username}: ${message.content}`);
-                post_data.content = `**#${message.channel.name} ${message.author.displayName}**: ${message.content}`
+                post_data.content = `**${message.author.displayName} #${message.channel.name}**: ${resolvedContent}`
             }
 
             if (message.embeds.length > 0) {
@@ -144,3 +145,21 @@ bot.on('messageUpdate', function (oldMessage, newMessage) {
 bot.on('error', function (error) {
     logger.error(error);
 });
+
+// https://github.com/ru-alpha/discord-relay/blob/main/bot.js
+// Took this function from a similar project I have done (shown above).
+const resolveMentions = (message) => {
+    const userMentionRegex = /<@!?(\d+)>/g;
+    let content = message.content.replace(userMentionRegex, (match, userId) => {
+        const user = message.guild.members.cache.get(userId);
+        return user ? `@${user.displayName || user.user.username}` : match;
+    });
+
+    const roleMentionRegex = /<@&(\d+)>/g;
+    content = content.replace(roleMentionRegex, (match, roleId) => {
+        const role = message.guild.roles.cache.get(roleId);
+        return role ? `@${role.name}` : match;
+    });
+
+    return content;
+};

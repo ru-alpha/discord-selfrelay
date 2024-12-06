@@ -67,12 +67,6 @@ bot.on('messageCreate', function (message) {
     if (obj) {
         logger.debug(`refusing to relay? ${relay}`);
         if (relay) {
-            // logger.debug('==== DEBUG ====');
-            // logger.debug(util.inspect(message.attachments));
-            // logger.debug(util.inspect(message.embeds));
-            // logger.debug(message.type);
-            // logger.debug('===============');
-
             var post_data = {};
                 post_data.username = message.guild.name;
 
